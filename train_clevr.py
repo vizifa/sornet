@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
+import numpy
+numpy.random.BitGenerator = numpy.random.bit_generator.BitGenerator
 from datasets import CLEVRDataset
 from functools import partial
 from networks import EmbeddingNet, ReadoutNet
