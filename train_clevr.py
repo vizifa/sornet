@@ -80,7 +80,7 @@ def log(
         writer.add_scalar(f'{split}/accuracy_{name}', a.item(), global_step)
      
     #########################################   
-    with open('exp_log.csv', 'w') as file:
+    with open('exp_log.csv', 'a') as file:
         csv_writer = csv.writer(file)
         #csv_writer.writerow(["Augmentation", "Epoch", "Loss", "Accuracy"])
         csv_writer.writerow([aug_list, epoch+1, avg_loss.item(), avg_acc.mean().item()])    
