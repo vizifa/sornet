@@ -36,8 +36,9 @@ import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 import sys
+import csv
 # torch.cuda.device = 
-pred_types = {'left': 90, 'right': 90, 'front': 90, 'behind': 90}
+pred_types = {'left': 90, 'right': 90, 'numpy.random.BitGenerator = numpy.random.bit_generator.BitGeneratorfront': 90, 'behind': 90}
 
 
 def step(data, model, head):
@@ -61,7 +62,9 @@ def calc_acc(data, logits, pred_types):
     acc = acc.nansum(dim=0) / (acc.shape[0] - acc.isnan().sum(dim=0)) * 100
     return acc
 
-
+############
+aug_list = ''
+############
 def log(
         writer, global_step, split, epoch, idx, total,
         batch_time, data_time, avg_loss, avg_acc, pred_types=None
@@ -75,7 +78,13 @@ def log(
     writer.add_scalar(f'{split}/accuracy', avg_acc.mean().item(), global_step)
     for a, name in zip(avg_acc, pred_types.keys()): 
         writer.add_scalar(f'{split}/accuracy_{name}', a.item(), global_step)
-
+     
+    #########################################   
+    with open('exp_log.csv', 'w') as file:
+        csv_writer = csv.writer(file)
+        csv_writer.writerow(["Augmentation", "Epoch", "Loss", "Accuracy"])
+        csv_writer.writerow([aug_list, epoch+1, avg_loss.item(), avg_acc.mean().item()])    
+    #########################################
 
 def train(rank, args):
     # rank =1 - rank
@@ -94,6 +103,12 @@ def train(rank, args):
         args.augment,
         args.max_nobj, rand_patch=True
     )
+    
+    ###############33
+    aug_list = train_data.aug_object.aug_list
+    print(aug_list)
+    ###############
+    
     # sys.exit(0)
     valid_data = CLEVRDataset(
         f'{args.data_dir}/valA.h5',
@@ -136,7 +151,6 @@ def train(rank, args):
         optimizer, init_epoch, args.n_epoch, train_one, eval_one,
         args.eval_freq, args.save_freq, args.log_dir
     )
-
     dist.destroy_process_group()
 
 # def train(args):
