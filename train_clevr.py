@@ -63,7 +63,7 @@ def calc_acc(data, logits, pred_types):
     return acc
 
 ############
-aug_list = ''
+aug_list = []
 ############
 def log(
         writer, global_step, split, epoch, idx, total,
@@ -105,7 +105,7 @@ def train(rank, args):
     )
     
     ###############33
-    aug_list = train_data.aug_object.aug_list
+    aug_list.append(train_data.aug_object.aug_list)
     print(aug_list)
     ###############
     
